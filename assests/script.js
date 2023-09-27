@@ -34,6 +34,18 @@ function renderCurrentWeather(city) {
 
     document.querySelector('#searched-city').textContent = city.name
 
+    var today = dayjs.unix(city.dt).format('MM/DD/YYYY')
+
+    document.querySelector('#date').textContent = today
+
+    document.querySelector('#current-weather-icon').setAttribute('src', `https://openweathermap.org/img/w/${city.weather[0].icon}.png`)
+
+    document.querySelector('#temp').textContent = city.main.temp + ' F°'
+
+    document.querySelector('#wind').textContent = city.wind.speed + ' mph'
+
+    document.querySelector('#humidity').textContent = city.main.humidity + ' %'
+
 };
 
 
