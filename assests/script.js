@@ -21,13 +21,72 @@ function currentWeather(city) {
 
             console.log(data)
 
+
+            var lat = data.coord.lat
+            var lon = data.coord.lon
+            var fiveDay = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${weatherApiKey}`
+
             renderCurrentWeather(data)
 
-        })
+
+            fetch(fiveDay)
+                .then(function (response) {
+
+                    return response.json()
+                })
+                .then(function (data) {
+                    renderForecast(data)
+                  
+                  
+                    console.log(data)
+                })
+
+
+
+        }).catch
 
 
 
 };
+
+function renderForecast(data) {
+
+var fiveDayEl = document.querySelector('.forecast-card-container')
+
+for (var i = 0; i < data.list.length; i+=8) {
+
+var date = document.createElement('h3');
+date.textContent = dayjs.unix(data.list[i].dt).format('MM/DD/YYYY')
+
+var icon = document.createElement('img')
+
+icon.setAttribute('src', `https://openweathermap.org/img/w/${data.list[i].weather[0].icon}.png`)
+
+var temp = document.createElement('p')
+temp.textContent = data.list[i].main.temp
+
+var windSpeed = document.createElement('p')
+windSpeed.textContent = data.list[i].wind.speed
+
+var humidity = document.createElement('p')
+humidity.textContent = data.list[i].main.humidity
+
+
+var forecastCard = document.createElement('div')
+forecastCard.append(date, icon, temp, windSpeed, humidity)
+fiveDayEl.append(forecastCard)
+}
+
+}
+
+
+
+
+
+
+
+
+
 
 
 function renderCurrentWeather(city) {
