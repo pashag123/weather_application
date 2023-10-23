@@ -53,6 +53,8 @@ function renderForecast(data) {
 
 var fiveDayEl = document.querySelector('.forecast-card-container')
 
+fiveDayEl.innerHTML = ''
+
 for (var i = 0; i < data.list.length; i+=8) {
 
 var date = document.createElement('h3');
@@ -73,11 +75,17 @@ humidity.textContent = data.list[i].main.humidity
 
 
 var forecastCard = document.createElement('div')
+forecastCard.style.width = '300px'
 forecastCard.append(date, icon, temp, windSpeed, humidity)
 fiveDayEl.append(forecastCard)
 }
 
 }
+
+
+
+
+
 
 
 
@@ -108,7 +116,24 @@ function renderCurrentWeather(city) {
 };
 
 
+function saveSearchHistory() {
 
+const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || []
+
+if (searchHistory.includes(searchBar.value)) {
+
+return
+
+
+
+}
+searchHistory.push(searchBar.value)
+localStorage.setItem('searchHistory', JSON.stringify(searchHistory))
+
+
+
+
+}
 
 
 
@@ -133,5 +158,6 @@ searchBtn.addEventListener('click', function (event) {
     event.preventDefault();
     city = searchBar.value;
     currentWeather(city);
+saveSearchHistory();
 
 })
