@@ -6,6 +6,7 @@ var searchBtn = document.querySelector('#searchbtn');
 
 var searchBar = document.querySelector('#search-bar');
 
+renderSearchHistory();
 
 function currentWeather(city) {
 
@@ -36,8 +37,8 @@ function currentWeather(city) {
                 })
                 .then(function (data) {
                     renderForecast(data)
-                  
-                  
+
+
                     console.log(data)
                 })
 
@@ -51,34 +52,35 @@ function currentWeather(city) {
 
 function renderForecast(data) {
 
-var fiveDayEl = document.querySelector('.forecast-card-container')
+    var fiveDayEl = document.querySelector('.forecast-card-container')
 
-fiveDayEl.innerHTML = ''
+    fiveDayEl.innerHTML = ''
 
-for (var i = 0; i < data.list.length; i+=8) {
+    for (var i = 0; i < data.list.length; i += 8) {
 
-var date = document.createElement('h3');
-date.textContent = dayjs.unix(data.list[i].dt).format('MM/DD/YYYY')
+        var date = document.createElement('h3');
+        date.textContent = dayjs.unix(data.list[i].dt).format('MM/DD/YYYY')
 
-var icon = document.createElement('img')
+        var icon = document.createElement('img')
 
-icon.setAttribute('src', `https://openweathermap.org/img/w/${data.list[i].weather[0].icon}.png`)
+        icon.setAttribute('src', `https://openweathermap.org/img/w/${data.list[i].weather[0].icon}.png`)
 
-var temp = document.createElement('p')
-temp.textContent = data.list[i].main.temp
+        var temp = document.createElement('p')
+        temp.textContent = data.list[i].main.temp
 
-var windSpeed = document.createElement('p')
-windSpeed.textContent = data.list[i].wind.speed
+        var windSpeed = document.createElement('p')
+        windSpeed.textContent = data.list[i].wind.speed
 
-var humidity = document.createElement('p')
-humidity.textContent = data.list[i].main.humidity
+        var humidity = document.createElement('p')
+        humidity.textContent = data.list[i].main.humidity
 
 
-var forecastCard = document.createElement('div')
-forecastCard.style.width = '300px'
-forecastCard.append(date, icon, temp, windSpeed, humidity)
-fiveDayEl.append(forecastCard)
-}
+        var forecastCard = document.createElement('div')
+        forecastCard.style.width = '15%'
+        forecastCard.classList.add('forecast-cards')
+        forecastCard.append(date, icon, temp, windSpeed, humidity)
+        fiveDayEl.append(forecastCard)
+    }
 
 }
 
@@ -118,26 +120,46 @@ function renderCurrentWeather(city) {
 
 function saveSearchHistory() {
 
-const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || []
+    const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || []
 
-if (searchHistory.includes(searchBar.value)) {
+    if (searchHistory.includes(searchBar.value)) {
 
-return
+        return
+
+
+
+    }
+    searchHistory.push(searchBar.value)
+    localStorage.setItem('searchHistory', JSON.stringify(searchHistory))
+
 
 
 
 }
-searchHistory.push(searchBar.value)
-localStorage.setItem('searchHistory', JSON.stringify(searchHistory))
 
+function renderSearchHistory() {
+document.getElementById('search-history').innerHTML = ''
+    const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || []
 
+    if (!searchHistory.length) {
+        return
+    }
+    for (i = searchHistory.length - 1; i >= 0; i--) {
+        let pastSearch = document.createElement('button')
+        pastSearch.textContent = searchHistory[i]
+        document.getElementById('search-history').append(pastSearch)
+    }
 
 
 }
 
 
-
-
+function  historyButton(e) {
+    if (e.target.tagName !== 'BUTTON') {
+        return
+    }
+currentWeather(e.target.textContent);
+}
 
 
 
@@ -157,7 +179,10 @@ localStorage.setItem('searchHistory', JSON.stringify(searchHistory))
 searchBtn.addEventListener('click', function (event) {
     event.preventDefault();
     city = searchBar.value;
+    if (!city) {return}
     currentWeather(city);
-saveSearchHistory();
-
+    saveSearchHistory();
+    renderSearchHistory();
 })
+
+document.getElementById('search-history').addEventListener('click', historyButton)
